@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 import requests
 import random
 from datetime import datetime
-import time  # Importando a biblioteca time para usar sleep
+import time
+import os  # Importando a biblioteca os para manipulação de caminhos
 
 app = Flask(__name__)
 
@@ -14,8 +15,9 @@ PROXY = {
 
 # Lista de domínios de e-mail
 EMAIL_DOMAINS = [
-    "@gmail.com", "@hotmail.com", "@yahoo.com", "@outlook.com", "@mailto.plus",
-    "@live.com", "@hotmail.com.br", "@gmail.com.br"
+    "@gmail.com", "@hotmail.com", "@yahoo.com", "@outlook.com", "@globomail.com",
+    "@live.com", "@terra.com.br", "@gmail.com","@bol.com", "@hotmail.com", "@uol.com", "@outlook.com", "@mailto.plus",
+    "@bol.com.br", "@ig.com.br", "@gmail.com.br","@yandex.com","@oi.com.br"
 ]
 
 # Função para gerar números aleatórios com zero padding
@@ -35,7 +37,7 @@ def generate_email(name):
     name_cleaned = "".join(e for e in name if e.isalnum()).lower()
 
     # Gera números aleatórios para o e-mail
-    random_numbers = random_num(1, 99, True)
+    random_numbers = random_num(10, 9999, True)
 
     # Escolhe um domínio aleatório da lista
     domain = random.choice(EMAIL_DOMAINS)
@@ -43,6 +45,13 @@ def generate_email(name):
     # Combina nome, números e domínio para criar o e-mail
     email = f"{name_cleaned}{random_numbers}{domain}"
     return email
+
+# Função para salvar email e senha no arquivo
+def save_credentials(email, password):
+    # Define o caminho absoluto para o arquivo email.txt
+    file_path = os.path.join(os.getcwd(), "email.txt")
+    with open(file_path, "a") as file:
+        file.write(f"{email}:{password}\n")
 
 @app.route("/check", methods=["GET"])
 def check():
@@ -109,7 +118,7 @@ def check():
                 "FirstName": NAME,
                 "LastName": "Silva",
                 "Email": EMAILL,
-                "Password": f"{NN1}35{NN1}5K7",
+                "Password": f"{NN}{NN1}35{NN}{NN1}",
                 "Language": "en",
                 "Country": "Brazil",
                 "Device": "Desktop",
@@ -152,7 +161,7 @@ def check():
             }
             data3 = {
                 "Email": EMAILL,
-                "Password": f"{NN1}35{NN1}5K7"
+                "Password": f"{NN}{NN1}35{NN}{NN1}"
             }
 
             response3 = requests.post(url3, headers=headers3, json=data3, proxies=PROXY)
@@ -161,6 +170,9 @@ def check():
             # Verificar se o login foi bem-sucedido
             if "jwt" not in response3.text:
                 return None, None, None, None
+
+            # Salvar email e senha no arquivo
+            save_credentials(EMAILL, f"{NN}{NN1}35{NN}{NN1}")
 
             return ID, TOKEN, EMAILL, NAME
 
@@ -260,4 +272,4 @@ def check():
         return jsonify({"status": "ERROR", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=4000)
+    app.run(host="0.0.0.0", port=5000)
